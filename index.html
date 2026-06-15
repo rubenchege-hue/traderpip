@@ -1184,7 +1184,7 @@ footer {
     <div class="enter-price"><sup>$</sup>10</div>
     <div class="enter-desc">One entry · Compete for $9,500 in funded challenges</div>
     <div class="h-btns">
-      <button class="btn-a" style="padding:18px 64px;font-size:12px" onclick="showToast('Registration opens shortly — follow us for updates!')">REGISTER NOW</button>
+      <button class="btn-a checkout-btn" style="padding:18px 64px;font-size:12px" onclick="startCheckout()" id="regBtn">REGISTER NOW — $10</button>
     </div>
     <div class="enter-checks">
       <span class="ec">Results verified weekly</span>
@@ -1912,6 +1912,31 @@ function showToast(msg) {
   t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
 }
+
+// ============ DODO PAYMENTS ============
+const DODO_CHECKOUT_URL = 'https://test.checkout.dodopayments.com/buy/pdt_0Nh6vjnYlImfYpm5c9iRQ';
+
+function startCheckout() {
+  const btn = document.getElementById('regBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ REDIRECTING...';
+  btn.style.opacity = '0.6';
+  window.location.href = DODO_CHECKOUT_URL;
+}
+
+// Check for payment status on return
+(function checkPaymentStatus() {
+  const params = new URLSearchParams(window.location.search);
+  const payment = params.get('payment');
+  if (payment === 'success') {
+    showToast('✅ Payment successful! Welcome to PIP LEAGUE — check your email for next steps.');
+    // Clean URL
+    window.history.replaceState({}, '', window.location.pathname);
+  } else if (payment === 'cancel') {
+    showToast('Payment cancelled. Ready when you are!');
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+})();
 
 // ============ CURSOR ============
 const cur = document.getElementById('cur'), ring = document.getElementById('curRing');
